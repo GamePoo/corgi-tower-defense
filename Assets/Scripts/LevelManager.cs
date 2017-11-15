@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class LevelManager : MonoBehaviour {
+public class LevelManager : Singleton<LevelManager>
+{
 
 	// private because public is error prone
 	//Creates prefab and makes it accessible in Unity Inspector
@@ -13,6 +14,9 @@ public class LevelManager : MonoBehaviour {
 	[SerializeField]
 	private CameraMovement cameraMovement;
 
+    [SerializeField]
+    private Transform map;
+
 	private Point blueSpawn, pinkSpawn;
 
 	[SerializeField]
@@ -21,7 +25,7 @@ public class LevelManager : MonoBehaviour {
 	[SerializeField]
 	private GameObject pinkPortalPrefab;
 
-	public Dictionary<Point, TileScript> Tiles {get; set;}
+	public Dictionary<Point, TileScript> Tiles {get;  set;}
 
 	public float TileSize 
 	{
@@ -39,6 +43,7 @@ public class LevelManager : MonoBehaviour {
 	void Update () {
 		
 	}
+    
 
 	private void createLevel() 
 	{
@@ -82,9 +87,9 @@ public class LevelManager : MonoBehaviour {
 		//Creates a new tile and makes a reference to that tile in the newTile variable
 		TileScript newTile = Instantiate (tilePrefabs[tileIndex]).GetComponent<TileScript>();
 
-		newTile.Setup (new Point (x, y),new Vector3 (worldStart.x + TileSize * x,worldStart.y - TileSize * y, 0));
+		newTile.Setup (new Point (x, y),new Vector3 (worldStart.x + TileSize * x,worldStart.y - TileSize * y, 0), map);
 	
-		Tiles.Add (new Point (x, y), newTile);
+		
 
 	}
 
