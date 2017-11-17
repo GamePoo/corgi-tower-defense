@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class LevelManager : MonoBehaviour {
-
+public class LevelManager : Singleton<LevelManager> 
+{
+	//array of tile prefabs, used to create tiles ingame
 	// private because public is error prone
 	//Creates prefab and makes it accessible in Unity Inspector
 	[SerializeField]
@@ -13,29 +14,36 @@ public class LevelManager : MonoBehaviour {
 	[SerializeField]
 	private CameraMovement cameraMovement;
 
+	[SerializeField]
+	private Transform map;
+
 	private Point blueSpawn, pinkSpawn;
 
+	//Prefabs for spawning portals
 	[SerializeField]
 	private GameObject bluePortalPrefab;
 
 	[SerializeField]
 	private GameObject pinkPortalPrefab;
 
+	//Dictionary containing all tiles in our game
 	public Dictionary<Point, TileScript> Tiles {get; set;}
 
+	// Property for returning size of tile
 	public float TileSize 
 	{
-		//find size of tiles
-		get { return tilePrefabs[0].GetComponent<SpriteRenderer> ().sprite.bounds.size.x; }
+		//Finds size of tiles
+		get { 
+			return tilePrefabs[0].GetComponent<SpriteRenderer> ().sprite.bounds.size.y; }
 	}
-	// Use this for initialization
-	void Start () {
 
+	void Start () 
+	{
+		//Creates level
 		createLevel ();
 		
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
 		
 	}
@@ -68,6 +76,7 @@ public class LevelManager : MonoBehaviour {
 
 		maxTile = Tiles [new Point (mapX - 1, mapY - 1)].transform.position;
 
+		//Sets camera limit to max tile position
 		cameraMovement.SetLimits (maxTile);
 
 		SpawnPortals ();
@@ -82,10 +91,9 @@ public class LevelManager : MonoBehaviour {
 		//Creates a new tile and makes a reference to that tile in the newTile variable
 		TileScript newTile = Instantiate (tilePrefabs[tileIndex]).GetComponent<TileScript>();
 
-		newTile.Setup (new Point (x, y),new Vector3 (worldStart.x + TileSize * x,worldStart.y - TileSize * y, 0));
+		//Uses the new tile variable to change position of the tile
+		newTile.Setup (new Point (x, y),new Vector3 (worldStart.x + TileSize * x,worldStart.y - TileSize * y, 0), map);
 	
-		Tiles.Add (new Point (x, y), newTile);
-
 	}
 
 	private string[] ReadLevelText()
@@ -103,7 +111,7 @@ public class LevelManager : MonoBehaviour {
 
 		Instantiate (bluePortalPrefab, Tiles [blueSpawn].GetComponent<TileScript>().WorldPosition, Quaternion.identity);
 
-		pinkSpawn = new Point (1,0);
+		pinkSpawn = new Point (17,8);
 
 		Instantiate (pinkPortalPrefab, Tiles [pinkSpawn].GetComponent<TileScript>().WorldPosition, Quaternion.identity);
 	}
