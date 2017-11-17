@@ -1,5 +1,6 @@
 ﻿
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class TileScript : MonoBehaviour {
 
@@ -26,21 +27,35 @@ public class TileScript : MonoBehaviour {
 	{
 		this.GridPosition = gridPos;
 		transform.position = worldPos;
-        transform.SetParent(parent);
-        LevelManager.Instance.Tiles.Add(gridPos, this);
+
+		//Sets tiles as children of Map
+		transform.SetParent (parent);
+
+		//Puts tile into dictionary in LevelManager
+		LevelManager.Instance.Tiles.Add (gridPos, this);
 	}
 
-    private void OnMouseOver()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            PlaceTower();
-        }
-    }
+	private void OnMouseOver() 
+	{
+		if (!EventSystem.current.IsPointerOverGameObject() && GameManager.Instance.ClickedBtn != null)
+		{
+			
+			if (Input.GetMouseButtonDown (0)) {
+				PlaceTower ();
+			}
+		}
 
-    private void PlaceTower()
-    {
-        Instantiate(GameManager.Instance.TowerPrefab, transform.position, Quaternion.identity);
-    }
+	}
 
+	private void PlaceTower()
+	{
+		GameObject tower = (GameObject)Instantiate (GameManager.Instance.ClickedBtn.TowerPrefab, transform.position, Quaternion.identity);
+		tower.GetComponent<SpriteRenderer> ().sortingOrder = GridPosition.Y;
+
+		tower.transform.SetParent (transform);
+
+		Hover.Instance.Deactivate ();
+
+		GameManager.Instance.BuyTower();
+	}
 }
