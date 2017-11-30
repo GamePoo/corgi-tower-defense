@@ -6,6 +6,8 @@ public class TileScript : MonoBehaviour {
 
 	public Point GridPosition { get; private set; }
 
+	public bool WalkAble { get; set; }
+
 	public Vector2 WorldPosition {
 		get {
 			return new Vector2 (transform.position.x + GetComponent<SpriteRenderer> ().bounds.size.x / 2, transform.position.y - GetComponent<SpriteRenderer> ().bounds.size.y / 2);
@@ -15,7 +17,7 @@ public class TileScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+		WalkAble = true;
 	}
 	
 	// Update is called once per frame
@@ -57,5 +59,8 @@ public class TileScript : MonoBehaviour {
 		Hover.Instance.Deactivate ();
 
 		GameManager.Instance.BuyTower();
+
+		// After placing a tower on a tile, it is no longer walkable
+		WalkAble = false;
 	}
 }

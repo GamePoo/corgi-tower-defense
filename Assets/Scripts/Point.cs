@@ -8,10 +8,18 @@ public struct Point
 
 	public int Y { get; set; }
 
-	public Point(int x, int y)
+	public Point(int x, int y) : this()
 	{
-		this.X = x;
-		this.Y = y;
+		X = x;
+		Y = y;
 	}
 
+	// Overloaded equality operators for Point
+	public static bool operator ==(Point lhs, Point rhs) {
+		return (lhs.X == rhs.X && lhs.Y == rhs.Y);
+	}
+
+	public static bool operator !=(Point lhs, Point rhs) {
+		return (lhs.X != rhs.X || lhs.Y != rhs.Y);
+	}
 }

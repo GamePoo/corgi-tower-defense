@@ -29,6 +29,8 @@ public class LevelManager : Singleton<LevelManager>
 	//Dictionary containing all tiles in our game
 	public Dictionary<Point, TileScript> Tiles {get; set;}
 
+	private Point mapSize;
+
 	// Property for returning size of tile
 	public float TileSize 
 	{
@@ -61,6 +63,8 @@ public class LevelManager : Singleton<LevelManager>
 		//Calculates map Y size
 		int mapY = mapData.Length;
 
+		mapSize = new Point (mapX, mapY);
+
 		Vector3 maxTile = Vector3.zero;
 
 		//Calculate world start point = top left corner of screen
@@ -92,6 +96,15 @@ public class LevelManager : Singleton<LevelManager>
 		//Creates a new tile and makes a reference to that tile in the newTile variable
 		TileScript newTile = Instantiate (tilePrefabs[tileIndex]).GetComponent<TileScript>();
 
+		if (tileIndex == 0) 
+		{
+			newTile.WalkAble = true;
+		}
+		else
+		{
+			newTile.WalkAble = false;
+		}
+
 		//Uses the new tile variable to change position of the tile
 		newTile.Setup (new Point (x, y),new Vector3 (worldStart.x + TileSize * x,worldStart.y - TileSize * y, 0), map);
 	}
@@ -116,5 +129,7 @@ public class LevelManager : Singleton<LevelManager>
 		Instantiate (pinkPortalPrefab, Tiles [pinkSpawn].GetComponent<TileScript>().WorldPosition, Quaternion.identity);
 	}
 
-
+	public bool InBounds(Point position) {
+		return position.X >= 0 && position.Y >= 0 && position.X <= mapSize.X && position.Y <= mapSize.Y;
+	}
 }
